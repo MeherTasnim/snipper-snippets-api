@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const basicAuth = require('../middleware/basicAuth');
+const authorize = require('../middleware/authorize');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 const users = [];
 
@@ -22,8 +24,9 @@ router.post('/', basicAuth, async (req, res) => {
     res.status(201).json({ id, email })
 });
 
-router.get('/', basicAuth, async (req, res) => {
+router.post('/login', basicAuth, async (req, res) => {
     const user = users.find((user) => user.email === req.user.email);
+
     if (!user) {
         return res.status(404).send({ error: 'User not found' })
     }
@@ -33,7 +36,15 @@ router.get('/', basicAuth, async (req, res) => {
         return res.status(404).json({ error: 'Incorrect password' });
     }
 
-    res.json({ id: user.id, email: user.email })
+    const payload = { id: user.id, email: user.email }
+
+    const accessToken = jwt.sign(payload, process.env['TOKEN_SECRET']);
+
+    res.json({ accessToken })
+});
+
+router.get('/', authorize, async (req, res) => {
+    res.json(req.user);
 });
 
 module.exports = router;
