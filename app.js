@@ -10,8 +10,8 @@ const config = {
     auth0Logout: true,
     secret: process.env['TOKEN_SECRET'],
     baseURL: 'http://localhost:3000',
-    clientID: '4QIcVR5yWJhF3ELcrJZAROzIpeETKzzv',
-    issuerBaseURL: 'https://panda288.us.auth0.com'
+    clientID: process.env['AUTH0_CLIENT_ID'],
+    issuerBaseURL: process.env['AUTH0_BASE_URL']
 };
 
 
